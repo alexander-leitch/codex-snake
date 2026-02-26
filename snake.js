@@ -110,63 +110,31 @@ function drawSnakeCell(x, y, palette) {
   const py = y * cellSize + 1;
   const size = cellSize - 2;
 
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(px, py, size, size);
-  ctx.clip();
-
+  // Solid base color
   ctx.fillStyle = palette.snake;
   ctx.fillRect(px, py, size, size);
 
-  // Distinct inner diamond pattern
-  const half = size / 2;
-  const offset = size * 0.15;
+  // Underlining pattern
+  const lineH = Math.max(2, Math.floor(size * 0.2));
   ctx.fillStyle = palette.snakeStripe;
-  ctx.beginPath();
-  ctx.moveTo(px + half, py + offset);
-  ctx.lineTo(px + size - offset, py + half);
-  ctx.lineTo(px + half, py + size - offset);
-  ctx.lineTo(px + offset, py + half);
-  ctx.fill();
-
-  ctx.restore();
+  ctx.fillRect(px, py + size - lineH, size, lineH);
 }
 
 function drawFoodCell(x, y, palette) {
   const px = x * cellSize + 1;
   const py = y * cellSize + 1;
   const size = cellSize - 2;
-  const half = size / 2;
-  const cx = px + half;
-  const cy = py + half;
+  const offset = Math.max(1, Math.floor(size * 0.1));
+  const innerSize = size - offset * 2;
 
-  ctx.save();
-
-  // Draw food as a distinct circular shape
-  ctx.beginPath();
-  ctx.arc(cx, cy, Math.max(1, half - 1), 0, Math.PI * 2);
-  ctx.clip();
-
+  // Solid base color inside a slightly smaller rect
   ctx.fillStyle = palette.food;
-  ctx.fill();
+  ctx.fillRect(px + offset, py + offset, innerSize, innerSize);
 
-  // Draw a bright inner dot
-  ctx.fillStyle = palette.foodInner;
-  ctx.beginPath();
-  ctx.arc(cx, cy, Math.max(1, half * 0.4), 0, Math.PI * 2);
-  ctx.fill();
-
-  // Add highly visible crosshairs
-  ctx.strokeStyle = palette.foodStripe;
-  ctx.lineWidth = Math.max(1, Math.floor(size * 0.15));
-  ctx.beginPath();
-  ctx.moveTo(cx - half, cy);
-  ctx.lineTo(cx + half, cy);
-  ctx.moveTo(cx, cy - half);
-  ctx.lineTo(cx, cy + half);
-  ctx.stroke();
-
-  ctx.restore();
+  // Underlining pattern
+  const lineH = Math.max(2, Math.floor(innerSize * 0.2));
+  ctx.fillStyle = palette.foodStripe;
+  ctx.fillRect(px + offset, py + offset + innerSize - lineH, innerSize, lineH);
 }
 
 function syncBoardSizeToScore() {
