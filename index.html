@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <h1>Snake</h1>
+        <p class="score">Score: <span id="score">0</span></p>
+        <p class="score">Speed L<span id="speed-level">1</span>: <span id="speed">220ms</span></p>
+        <p class="score">Size L<span id="size-level">1</span>: <span id="board-size">20x20</span></p>
+      </header>
+
+      <section class="board-wrap">
+        <canvas id="game" width="400" height="400" aria-label="Snake game board"></canvas>
+        <div id="status" class="status">Press any direction to start</div>
+      </section>
+
+      <section class="controls" aria-label="Touch controls">
+        <button class="ctrl" data-dir="up" aria-label="Move up">▲</button>
+        <div class="ctrl-row">
+          <button class="ctrl" data-dir="left" aria-label="Move left">◀</button>
+          <button class="ctrl" data-dir="down" aria-label="Move down">▼</button>
+          <button class="ctrl" data-dir="right" aria-label="Move right">▶</button>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="pause" class="restart" type="button">Pause</button>
+        <button id="restart" class="restart" type="button">Restart</button>
+      </div>
+    </main>
+
+    <script type="module" src="./snake.js"></script>
+  </body>
+</html>

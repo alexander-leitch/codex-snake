@@ -1,0 +1,114 @@
+:root {
+  --bg: #f4f4f4;
+  --panel: #ffffff;
+  --text: #1a1a1a;
+  --grid: #e7e7e7;
+  --snake: #1f7a1f;
+  --food: #d13a32;
+  --border: #d0d0d0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.app {
+  width: 100vw;
+  min-height: 100dvh;
+  background: var(--panel);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.score {
+  margin: 0;
+}
+
+.board-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#game {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--border);
+  background: #fcfcfc;
+  display: block;
+  margin: 0 auto;
+  max-height: calc(100dvh - 210px);
+  max-width: calc(100dvh - 210px);
+}
+
+.status {
+  margin-top: 8px;
+  min-height: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.controls {
+  margin-top: 14px;
+  display: none;
+  justify-items: center;
+  gap: 8px;
+}
+
+.ctrl-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ctrl,
+.restart {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+.restart {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions .restart {
+  flex: 1;
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+  .controls {
+    display: grid;
+  }
+}
