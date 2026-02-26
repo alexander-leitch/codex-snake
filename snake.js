@@ -14,6 +14,7 @@ const speedLevelEl = document.getElementById('speed-level');
 const sizeLevelEl = document.getElementById('size-level');
 const speedEl = document.getElementById('speed');
 const boardSizeEl = document.getElementById('board-size');
+const themeModeEl = document.getElementById('theme-mode');
 const statusEl = document.getElementById('status');
 const restartBtn = document.getElementById('restart');
 const pauseBtn = document.getElementById('pause');
@@ -28,6 +29,8 @@ const expandGrid = gameLogic.expandGrid ?? (() => false);
 
 const state = createInitialState({ gridSize: PROGRESSION.baseGridSize });
 let cellSize = canvas.width / state.gridSize;
+const THEME_STORAGE_KEY = 'snake-theme-mode';
+const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 let accumulator = 0;
 let lastTime = 0;
@@ -48,15 +51,16 @@ const keyToDir = {
 };
 
 function draw() {
-  ctx.fillStyle = '#fcfcfc';
+  const palette = getPalette();
+  ctx.fillStyle = palette.board;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawGrid();
+  drawGrid(palette);
 
-  drawFoodCell(state.food.x, state.food.y);
+  drawFoodCell(state.food.x, state.food.y, palette);
 
   for (const part of state.snake) {
-    drawSnakeCell(part.x, part.y);
+    drawSnakeCell(part.x, part.y, palette);
   }
 
   scoreEl.textContent = String(state.score);
@@ -84,8 +88,8 @@ function resizeCanvas() {
   cellSize = canvas.width / state.gridSize;
 }
 
-function drawGrid() {
-  ctx.strokeStyle = '#e7e7e7';
+function drawGrid(palette) {
+  ctx.strokeStyle = palette.grid;
   ctx.lineWidth = 1;
   for (let i = 0; i <= state.gridSize; i += 1) {
     const p = i * cellSize;
@@ -101,7 +105,7 @@ function drawGrid() {
   }
 }
 
-function drawSnakeCell(x, y) {
+function drawSnakeCell(x, y, palette) {
   const px = x * cellSize + 1;
   const py = y * cellSize + 1;
   const size = cellSize - 2;
@@ -111,10 +115,10 @@ function drawSnakeCell(x, y) {
   ctx.rect(px, py, size, size);
   ctx.clip();
 
-  ctx.fillStyle = '#1f7a1f';
+  ctx.fillStyle = palette.snake;
   ctx.fillRect(px, py, size, size);
 
-  ctx.strokeStyle = '#b8ebb8';
+  ctx.strokeStyle = palette.snakeStripe;
   ctx.lineWidth = Math.max(1, Math.floor(size * 0.08));
   const step = Math.max(6, Math.floor(size / 3));
   for (let o = -size; o <= size; o += step) {
@@ -126,7 +130,7 @@ function drawSnakeCell(x, y) {
   ctx.restore();
 }
 
-function drawFoodCell(x, y) {
+function drawFoodCell(x, y, palette) {
   const px = x * cellSize + 1;
   const py = y * cellSize + 1;
   const size = cellSize - 2;
@@ -137,13 +141,13 @@ function drawFoodCell(x, y) {
   ctx.rect(px, py, size, size);
   ctx.clip();
 
-  ctx.fillStyle = '#d13a32';
+  ctx.fillStyle = palette.food;
   ctx.fillRect(px, py, size, size);
 
-  ctx.fillStyle = '#ffe4e1';
+  ctx.fillStyle = palette.foodInner;
   ctx.fillRect(px + inner, py + inner, size - inner * 2, size - inner * 2);
 
-  ctx.strokeStyle = '#7f1c16';
+  ctx.strokeStyle = palette.foodStripe;
   ctx.lineWidth = Math.max(1, Math.floor(size * 0.1));
   ctx.beginPath();
   ctx.moveTo(px, py);
@@ -192,6 +196,37 @@ function handleDirection(direction) {
   setDirection(state, direction);
 }
 
+function getPalette() {
+  const css = getComputedStyle(document.documentElement);
+  return {
+    board: css.getPropertyValue('--board').trim(),
+    grid: css.getPropertyValue('--grid').trim(),
+    snake: css.getPropertyValue('--snake').trim(),
+    snakeStripe: css.getPropertyValue('--snake-stripe').trim(),
+    food: css.getPropertyValue('--food').trim(),
+    foodInner: css.getPropertyValue('--food-inner').trim(),
+    foodStripe: css.getPropertyValue('--food-stripe').trim()
+  };
+}
+
+function resolveTheme(mode) {
+  if (mode === 'day' || mode === 'night') return mode;
+  return systemThemeQuery.matches ? 'night' : 'day';
+}
+
+function applyTheme(mode) {
+  const effectiveTheme = resolveTheme(mode);
+  document.documentElement.dataset.theme = effectiveTheme;
+  document.documentElement.dataset.themeMode = mode;
+}
+
+function initializeTheme() {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  const mode = stored === 'day' || stored === 'night' || stored === 'auto' ? stored : 'auto';
+  themeModeEl.value = mode;
+  applyTheme(mode);
+}
+
 document.addEventListener('keydown', (event) => {
   if (event.key === 'r' || event.key === 'R') {
     event.preventDefault();
@@ -218,6 +253,20 @@ document.addEventListener('keydown', (event) => {
 for (const btn of controls) {
   btn.addEventListener('click', () => handleDirection(btn.dataset.dir));
 }
+
+themeModeEl.addEventListener('change', () => {
+  const mode = themeModeEl.value;
+  localStorage.setItem(THEME_STORAGE_KEY, mode);
+  applyTheme(mode);
+  draw();
+});
+
+systemThemeQuery.addEventListener('change', () => {
+  if (themeModeEl.value === 'auto') {
+    applyTheme('auto');
+    draw();
+  }
+});
 
 restartBtn.addEventListener('click', () => {
   restart(state, { gridSize: PROGRESSION.baseGridSize });
@@ -253,5 +302,6 @@ window.addEventListener('resize', () => {
 });
 
 resizeCanvas();
+initializeTheme();
 draw();
 requestAnimationFrame(loop);

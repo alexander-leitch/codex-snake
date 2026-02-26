@@ -2,10 +2,30 @@
   --bg: #f4f4f4;
   --panel: #ffffff;
   --text: #1a1a1a;
+  --board: #fcfcfc;
   --grid: #e7e7e7;
   --snake: #1f7a1f;
+  --snake-stripe: #b8ebb8;
   --food: #d13a32;
+  --food-inner: #ffe4e1;
+  --food-stripe: #7f1c16;
   --border: #d0d0d0;
+  --button: #ffffff;
+}
+
+:root[data-theme="night"] {
+  --bg: #0f1116;
+  --panel: #171a21;
+  --text: #e7ebf4;
+  --board: #11151d;
+  --grid: #2f3542;
+  --snake: #4bc96a;
+  --snake-stripe: #b6f7c6;
+  --food: #ff6b5e;
+  --food-inner: #ffd5d1;
+  --food-stripe: #7a221c;
+  --border: #323a4a;
+  --button: #1e2430;
 }
 
 * {
@@ -31,9 +51,12 @@ body {
 
 .topbar {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 14px;
+  align-items: center;
   margin-bottom: 12px;
+  text-align: center;
 }
 
 .topbar h1 {
@@ -58,7 +81,7 @@ body {
   height: auto;
   aspect-ratio: 1 / 1;
   border: 1px solid var(--border);
-  background: #fcfcfc;
+  background: var(--board);
   display: block;
   margin: 0 auto;
   max-height: calc(100dvh - 210px);
@@ -86,11 +109,25 @@ body {
 .ctrl,
 .restart {
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--button);
   color: var(--text);
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 1rem;
+}
+
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#theme-mode {
+  border: 1px solid var(--border);
+  background: var(--button);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 8px;
 }
 
 .restart {
@@ -101,6 +138,8 @@ body {
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  justify-content: center;
+  text-align: center;
 }
 
 .actions .restart {
