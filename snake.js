@@ -72,10 +72,10 @@ function draw() {
     state.status === 'gameover'
       ? 'Game over. Press restart to play again.'
       : state.status === 'paused'
-      ? 'Paused'
-      : state.status === 'idle'
-      ? 'Press any direction to start'
-      : 'Running';
+        ? 'Paused'
+        : state.status === 'idle'
+          ? 'Press any direction to start'
+          : 'Running';
   pauseBtn.textContent = state.status === 'paused' ? 'Resume' : 'Pause';
 }
 
@@ -118,12 +118,15 @@ function drawSnakeCell(x, y, palette) {
   ctx.fillStyle = palette.snake;
   ctx.fillRect(px, py, size, size);
 
-  // Checkerboard pattern for snake cells to make them highly distinct
+  // Distinct inner diamond pattern
   const half = size / 2;
+  const offset = size * 0.15;
   ctx.fillStyle = palette.snakeStripe;
   ctx.beginPath();
-  ctx.rect(px, py, half, half);
-  ctx.rect(px + half, py + half, half, half);
+  ctx.moveTo(px + half, py + offset);
+  ctx.lineTo(px + size - offset, py + half);
+  ctx.lineTo(px + half, py + size - offset);
+  ctx.lineTo(px + offset, py + half);
   ctx.fill();
 
   ctx.restore();
@@ -138,7 +141,7 @@ function drawFoodCell(x, y, palette) {
   const cy = py + half;
 
   ctx.save();
-  
+
   // Draw food as a distinct circular shape
   ctx.beginPath();
   ctx.arc(cx, cy, Math.max(1, half - 1), 0, Math.PI * 2);
