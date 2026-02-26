@@ -118,15 +118,14 @@ function drawSnakeCell(x, y, palette) {
   ctx.fillStyle = palette.snake;
   ctx.fillRect(px, py, size, size);
 
-  ctx.strokeStyle = palette.snakeStripe;
-  ctx.lineWidth = Math.max(1, Math.floor(size * 0.08));
-  const step = Math.max(6, Math.floor(size / 3));
-  for (let o = -size; o <= size; o += step) {
-    ctx.beginPath();
-    ctx.moveTo(px + o, py + size);
-    ctx.lineTo(px + o + size, py);
-    ctx.stroke();
-  }
+  // Checkerboard pattern for snake cells to make them highly distinct
+  const half = size / 2;
+  ctx.fillStyle = palette.snakeStripe;
+  ctx.beginPath();
+  ctx.rect(px, py, half, half);
+  ctx.rect(px + half, py + half, half, half);
+  ctx.fill();
+
   ctx.restore();
 }
 
@@ -134,29 +133,36 @@ function drawFoodCell(x, y, palette) {
   const px = x * cellSize + 1;
   const py = y * cellSize + 1;
   const size = cellSize - 2;
-  const inner = Math.max(2, Math.floor(size * 0.18));
+  const half = size / 2;
+  const cx = px + half;
+  const cy = py + half;
 
   ctx.save();
+  
+  // Draw food as a distinct circular shape
   ctx.beginPath();
-  ctx.rect(px, py, size, size);
+  ctx.arc(cx, cy, Math.max(1, half - 1), 0, Math.PI * 2);
   ctx.clip();
 
   ctx.fillStyle = palette.food;
-  ctx.fillRect(px, py, size, size);
+  ctx.fill();
 
+  // Draw a bright inner dot
   ctx.fillStyle = palette.foodInner;
-  ctx.fillRect(px + inner, py + inner, size - inner * 2, size - inner * 2);
+  ctx.beginPath();
+  ctx.arc(cx, cy, Math.max(1, half * 0.4), 0, Math.PI * 2);
+  ctx.fill();
 
+  // Add highly visible crosshairs
   ctx.strokeStyle = palette.foodStripe;
-  ctx.lineWidth = Math.max(1, Math.floor(size * 0.1));
+  ctx.lineWidth = Math.max(1, Math.floor(size * 0.15));
   ctx.beginPath();
-  ctx.moveTo(px, py);
-  ctx.lineTo(px + size, py + size);
+  ctx.moveTo(cx - half, cy);
+  ctx.lineTo(cx + half, cy);
+  ctx.moveTo(cx, cy - half);
+  ctx.lineTo(cx, cy + half);
   ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(px + size, py);
-  ctx.lineTo(px, py + size);
-  ctx.stroke();
+
   ctx.restore();
 }
 
